@@ -1,22 +1,31 @@
 # Build Stage
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
+# Set the working directory for build stage
 WORKDIR /src
 
-# Copy project files and restore dependencies
-COPY . .
+# Copy project file and restore dependencies
+COPY *.csproj ./
 RUN dotnet restore
+
+# Copy the remaining source code
+COPY . . 
+
+# Build and publish the application
 RUN dotnet publish -c Release -o /app
 
-# Runtime Stage
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
 
+# Runtime Stage
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+
+# Set the working directory for runtime stage
 WORKDIR /app
 
+# Copy the application from the build stage
 COPY --from=build /app .
 
-# Expose the application to the port provided by Vercel
-ENV ASPNETCORE_URLS=http://+:${PORT}
+# Expose the application port
+EXPOSE 8080
 
-# Set the entry point for the application
+# Start the application
 ENTRYPOINT ["dotnet", "TBA.dll"]
