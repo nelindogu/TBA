@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "publish/**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/publish/TBA.dll"
+    }
+  ]
+}
