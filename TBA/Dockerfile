@@ -1,31 +1,26 @@
 # Build Stage
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 
-# Set the working directory for build stage
 WORKDIR /src
 
-# Copy project file and restore dependencies
+# Copy project files and restore dependencies
 COPY *.csproj ./
 RUN dotnet restore
 
-# Copy the remaining source code
-COPY . . 
-
-# Build and publish the application
+# Copy the rest of the app and publish it
+COPY . ./
 RUN dotnet publish -c Release -o /app
 
-
 # Runtime Stage
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
 
-# Set the working directory for runtime stage
 WORKDIR /app
 
-# Copy the application from the build stage
+# Copy the published app from the build stage
 COPY --from=build /app .
 
-# Expose the application port
+# Expose port for the app
 EXPOSE 8080
 
-# Start the application
+# Set the entry point for the app
 ENTRYPOINT ["dotnet", "TBA.dll"]
